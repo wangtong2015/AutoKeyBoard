@@ -50,7 +50,7 @@
 
 默认使用的作为画布的图片为1438*955的蓝色图片，如下所示
 
-![keyboard](C:\Users\WangTong\Documents\GitHub\AutoKeyBoard\keyboard.png)
+![keyboard](keyboard.png)
 
 键盘默认大小为：1438*570
 
