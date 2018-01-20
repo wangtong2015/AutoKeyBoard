@@ -1,6 +1,8 @@
 package com.example.wangtong.autokeyboardapi23;
 
 
+import javax.management.openmbean.KeyAlreadyExistsException;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -20,7 +22,7 @@ import android.widget.ImageView;
 
 
 public class MainActivity extends AppCompatActivity {
-    ImageView keyboard;// keyboard上面长了190，以此为准
+    ImageView keyboard;// keyboard���泤��190���Դ�Ϊ׼
     char KEY_NOT_FOUND=0;
     AutoKeyboard autoKeyboard;
     int[] location;
@@ -38,10 +40,10 @@ public class MainActivity extends AppCompatActivity {
         float keyboardHeight=570;
         float keyboardWidth=1438;
         float deltaY=190;
-        float topThreshold=0;// 上界
-        float bottomThreshold=955;// 下界
-        float minWidth=72;// 最小键宽
-        float minHetight=95;//最小键长
+        float topThreshold=0;// �Ͻ�
+        float bottomThreshold=955;// �½�
+        float minWidth=72;// ��С����
+        float minHetight=95;//��С����
         int keyPos[];
         int[] location;
         class KEY{
@@ -85,18 +87,23 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         KEY keys[];
-
+        void setKeyboardHeight(float newkeyBoardHeight){
+            this.keyboardHeight=newkeyBoardHeight*screen_height_ratio;
+        }
+        void setKeyboardWidth(float newkeyBoardWidth){
+            this.keyboardWidth=newkeyBoardWidth*screen_width_ratio;
+        }
         void setTopThreshold(float newTopThreshold){
-            this.topThreshold=newTopThreshold;
+            this.topThreshold=newTopThreshold*screen_height_ratio;
         }
         void setBottomThreshold(float newBottomThreshold){
-            this.bottomThreshold=newBottomThreshold;
+            this.bottomThreshold=newBottomThreshold*screen_height_ratio;
         }
         void setMinWidth(float newMinWidth){
-            this.minWidth=newMinWidth;
+            this.minWidth=newMinWidth*screen_width_ratio;
         }
         void setMinHetight(float newMinHeight){
-            this.minHetight=newMinHeight;
+            this.minHetight=newMinHeight*screen_height_ratio;
         }
         void getScreenSizeRatio(){
             DisplayMetrics metrics =new DisplayMetrics();
@@ -126,11 +133,11 @@ public class MainActivity extends AppCompatActivity {
             int pos = this.keyPos[ch-'A'];
             float dX=x-this.keys[pos].init_x;
             float dY=y-this.keys[pos].init_y;
-            if(dY>=0){// 向下平移
+            if(dY>=0){// ����ƽ��
                 if(this.keys[19].init_y+this.keys[19].init_height/2+dY>this.bottomThreshold){
                     if(pos>18)
                         return false;
-                    else if(pos>9){//第二排向下压缩
+                    else if(pos>9){//�ڶ�������ѹ��
                         for (int i=0;i<19;i++){
                             this.keys[i].test_y=this.keys[i].init_y+dY;
                             this.keys[i].test_height=this.keys[i].init_height;
@@ -140,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                             this.keys[i].test_y=this.bottomThreshold-bottomHeight/2;
                             this.keys[i].test_height=bottomHeight;
                         }
-                    }else{// 第一排向下压缩
+                    }else{// ��һ������ѹ��
                         for (int i=0;i<9;i++){
                             this.keys[i].test_y=this.keys[i].init_y+dY;
                             this.keys[i].test_height=this.keys[i].init_height;
@@ -162,11 +169,11 @@ public class MainActivity extends AppCompatActivity {
                         this.keys[i].test_height=this.keys[i].init_height;
                     }
                 }
-            }else{// 向上平移
+            }else{// ����ƽ��
                 if(this.keys[0].init_y-this.keys[0].init_height/2+dY<this.topThreshold){
                     if(pos<10)
                         return false;
-                    else if(pos<19){//第二排向上压
+                    else if(pos<19){//�ڶ�������ѹ
                         for (int i=10;i<26;i++){
                             this.keys[i].test_y=this.keys[i].init_y+dY;
                             this.keys[i].test_height=this.keys[i].init_height;
@@ -176,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                             this.keys[i].test_y=topHeight/2;
                             this.keys[i].test_height=topHeight;
                         }
-                    }else{//第三排向上压
+                    }else{//����������ѹ
                         for (int i=19;i<26;i++){
                             this.keys[i].test_y=this.keys[i].init_y+dY;
                             this.keys[i].test_height=this.keys[i].init_height;
@@ -203,15 +210,15 @@ public class MainActivity extends AppCompatActivity {
                     return false;
                 }
             }
-            if(dX>=0) {// 向右平移
+            if(dX>=0) {// ����ƽ��
                 if (pos == 9 || pos == 18 || pos == 25)
                     return false;
-            }else {// 向左平移
+            }else {// ����ƽ��
                 if (pos == 0 || pos == 10 || pos == 19)
                     return false;
             }
 
-            if(pos<10 ){// 第一排
+            if(pos<10 ){// ��һ��
                 this.keys[pos].test_x=x;
                 this.keys[pos].test_width=this.keys[pos].init_width;
 
@@ -236,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
                     this.keys[i].test_width=this.keys[i-8].test_width;
                 }
 
-            }else if(pos<19){// 第二排
+            }else if(pos<19){// �ڶ���
                 this.keys[pos].test_x=x;
                 this.keys[pos].test_width=this.keys[pos].init_width;
 
@@ -263,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
                     this.keys[i].test_x=this.keys[i-8].test_x;
                     this.keys[i].test_width=this.keys[i-8].test_width;
                 }
-            }else{// 第三排
+            }else{// ������
                 this.keys[pos].test_x=x;
                 this.keys[pos].test_width=this.keys[pos].init_width;
 
@@ -327,7 +334,7 @@ public class MainActivity extends AppCompatActivity {
             }
             this.keyboard.setImageBitmap(this.baseBitmap);
         }
-
+        
         public void resetLayout(){
             if(this.keys==null){
                 this.keys=new KEY[26];
@@ -406,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             this.location=new int[2];
-            this.keyPos=new int[]{10,23,21,12,2,13,14,15,7,16,17,18,25,24,8,9,0,3,11,4,6,22,1,20,5,19};// A-Z 对应 Q-M
+            this.keyPos=new int[]{10,23,21,12,2,13,14,15,7,16,17,18,25,24,8,9,0,3,11,4,6,22,1,20,5,19};// A-Z ��Ӧ Q-M
             this.keyboard.getLocationOnScreen(this.location);
             this.keys=new KEY[26];
             for (int i=0;i<26;i++){
@@ -430,8 +437,8 @@ public class MainActivity extends AppCompatActivity {
                 keyboard.getLocationOnScreen(location);
             }
         });
-        location=new int[2];
         autoKeyboard=new AutoKeyboard(keyboard);
+        
     }
 
     public boolean onTouchEvent(MotionEvent event){
